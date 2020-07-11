@@ -1,12 +1,26 @@
+"""Setup for package."""
+
 import re
 from collections import namedtuple
-from setuptools import setup
 from urllib.parse import urlsplit
+from typing import Tuple, List, Dict
+
+from setuptools import setup
 
 GitRequirement = namedtuple('GitRequirement', 'url, name')
 
 
 def read_requirements():
+    # type: () -> Tuple[List[str], Dict[str, GitRequirement]]
+    """Read the requirements.txt for this project.
+
+    Returns:
+        List[str]: The PyPI requirements.
+        Dict[str, GitRequirement]: The git requirements.
+
+    Raises:
+        ValueError: If parsing the requirements.txt causes an error.
+    """
     with open('requirements.txt') as fd:
         requirements = fd.read().splitlines()
     pypi_requirements = []
@@ -15,6 +29,7 @@ def read_requirements():
         requirement = requirement.strip()
         if requirement.startswith('#'):
             continue
+        requirement = re.sub(r'\s+#.*', '', requirement)
         if requirement.startswith('git+'):
             match = re.fullmatch(r'git\+(?P<url>[^#]*)(#egg=(?P<name>.*))?', requirement)
             if not match:
@@ -32,6 +47,8 @@ def read_requirements():
 
 
 def main():
+    # type: () -> None
+    """Install the package."""
     pypi_requirements, git_requirements = read_requirements()
     setup(
         name='pdfocr',
