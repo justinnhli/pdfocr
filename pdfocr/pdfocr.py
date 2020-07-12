@@ -4,6 +4,9 @@ from pathlib import Path
 from subprocess import run
 from tempfile import TemporaryDirectory
 
+from pytesseract import image_to_string
+from PIL import Image
+
 
 def ocr_directory(path, verbose=False):
     # type: (Path, bool) -> str
